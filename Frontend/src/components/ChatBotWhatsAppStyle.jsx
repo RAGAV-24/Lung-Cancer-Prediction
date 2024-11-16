@@ -27,7 +27,7 @@ function ChatBotWhatsAppStyle() {
   const [result, setResult] = useState(null);
   const [guidance, setGuidance] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false); // To handle the end of the session
+  const [isCompleted, setIsCompleted] = useState(false);
   const chatRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +38,6 @@ function ChatBotWhatsAppStyle() {
     const question = questions[currentQuestion];
     const key = question.key;
 
-    // Convert gender value to 1 for Male, 2 for Female
     let processedValue = value;
     if (key === "GENDER") {
       processedValue = value === "Male" ? 1 : value === "Female" ? "2" : value;
@@ -50,39 +49,33 @@ function ChatBotWhatsAppStyle() {
       processedValue = "1";
     }
 
-    // For age, ensure it's treated as a number (and not a string)
     if (key === "AGE") {
       processedValue = parseInt(value, 10);
     }
 
-    // Update form data with the processed value
     setFormData({ ...formData, [key]: processedValue });
 
-    // Add the question to chat
     setMessages(prevMessages => [
       ...prevMessages,
       { sender: 'bot', text: question.label }
     ]);
 
-    // Then, add the user response to chat
     setMessages(prevMessages => [
       ...prevMessages,
       { sender: 'user', text: value }
     ]);
 
-    // If there's a next question, move to it
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      handleSubmit(); // If all questions are answered, submit the form
-      setIsCompleted(true); // Mark the session as complete
+      handleSubmit();
+      setIsCompleted(true);
     }
   };
 
   const handleSubmit = async () => {
-    // Ensure Shortness of Breath has a value if it's empty
     if (!formData.SHORTNESS_OF_BREATH) {
-      formData.SHORTNESS_OF_BREATH = "1"; // Default value for missing Shortness of Breath (No)
+      formData.SHORTNESS_OF_BREATH = "1";
     }
 
     try {
@@ -94,7 +87,6 @@ function ChatBotWhatsAppStyle() {
         { sender: 'bot', text: `Prediction: ${response.data.prediction}` }
       ]);
 
-      // Provide guidance based on the prediction result
       if (response.data.prediction === "YES") {
         setGuidance(
           "It is highly recommended that you consult with a doctor immediately for further diagnosis and tests. Lung cancer is a serious condition, and early detection can significantly improve treatment outcomes. Please do not delay in seeking professional medical help."
@@ -109,7 +101,6 @@ function ChatBotWhatsAppStyle() {
     }
   };
 
-  // Typing Effect for messages
   const typingEffect = (text) => {
     return {
       initial: { opacity: 0 },
@@ -118,7 +109,6 @@ function ChatBotWhatsAppStyle() {
     };
   };
 
-  // Typing Effect for Dots (...), simulate the typing indicator
   const typingDotsEffect = (isTyping) => {
     return {
       initial: { opacity: 0 },
@@ -177,7 +167,6 @@ function ChatBotWhatsAppStyle() {
           <div ref={chatRef}></div>
         </motion.div>
 
-        {/* Input form */}
         <div className="mt-4">
           {!isCompleted && questions.length > 0 && currentQuestion < questions.length && (
             <motion.div
@@ -214,7 +203,6 @@ function ChatBotWhatsAppStyle() {
           )}
         </div>
 
-        {/* Display Results */}
         {isCompleted && (
          <div className="mt-4 bg-gradient-to-r from-gray-500 via-teal-500 to-green-500 text-black text-bold p-6 rounded-lg shadow-lg">
          <motion.h3
